@@ -1,0 +1,34 @@
+.186
+PUBLIC READ_OCTAL_UNSIGNED
+PUBLIC NUM
+
+DATA_SEG SEGMENT PARA PUBLIC 'DATA'
+    NUM DW 0
+    O_IN DB 13, 10, 'Enter an unsigned octal number: $'
+DATA_SEG ENDS
+
+CODE_SEG SEGMENT PARA PUBLIC 'CODE'
+    ASSUME CS:CODE_SEG, DS:DATA_SEG
+
+READ_OCTAL_UNSIGNED PROC NEAR
+    MOV AH, 9H
+    MOV DX, OFFSET O_IN
+    INT 21H
+    XOR BX, BX
+    READ:
+        MOV AH, 1H
+        INT 21H
+        CMP AL, 13
+        JE READ_END
+        SHL BX, 3
+        XOR AH, AH
+        SUB AL, '0'
+        OR BX, AX
+        JMP READ
+    READ_END:
+        MOV NUM, BX
+        RET
+READ_OCTAL_UNSIGNED ENDP
+
+CODE_SEG ENDS
+END
